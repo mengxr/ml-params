@@ -1,6 +1,6 @@
 package param.shared
 
-import param.Param
+import param._
 
 trait HasMaxIter extends Params {
 

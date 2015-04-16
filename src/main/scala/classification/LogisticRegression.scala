@@ -11,12 +11,7 @@ abstract class LogisticRegression extends Params with HasMaxIter with HasRegPara
 
   setDefault(maxIter -> 10, regParam -> 1)
 
-  def fit(df: AnyRef, extraParamMap: ParamMap): LogisticRegressionModel = {
-
-    ???
-  }
+  def fit(df: AnyRef, extraParamMap: ParamMap): LogisticRegressionModel = ???
 }
 
-class LogisticRegressionModel extends Params with HasMaxIter with HasRegParam {
-
-}
+class LogisticRegressionModel extends Params with HasMaxIter with HasRegParam

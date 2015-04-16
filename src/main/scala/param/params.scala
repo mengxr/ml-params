@@ -11,9 +11,6 @@ class Param(val parent: Params, val name: String, val doc: String) {
 
 case class ParamPair(param: Param, value: Int)
 
-type ParamMap = mutable.Map[Param, Int]
-val ParamMap = mutable.Map
-
 trait Params {
 
   private val defaultParamMap: ParamMap = ParamMap.empty
