@@ -1,47 +1,77 @@
 package param
 
-import scala.collection.mutable
+import util.Identifiable
 
-class Param(val parent: Params, val name: String, val doc: String) {
-
-  def ->(value: Int): ParamPair = ParamPair(this, value)
-
-  def w(value: Int): ParamPair = this -> value
+class Param[T](val parent: Params[_], val name: String, val doc: String) {
+  def validate(value: T): Unit = {}
 }
 
-case class ParamPair(param: Param, value: Int)
+case class ParamPair[T](param: Param[T], value: T) {
+  param.validate(value)
+}
 
-trait Params {
+class ParamMap {
+  def put[T](param: Param[T], value: T): this.type = ???
+  def get[T](parent: Param[T]): Option[T] = ???
+  def ++(other: ParamMap): ParamMap = ???
+}
+
+object ParamMap {
+  def empty: ParamMap = ???
+}
+
+trait Params[+Self <: Params[Self]] extends Identifiable {
+
+  val params: Array[Param[_]] = ???
+
+  def hasParam(name: String): Boolean = ???
+
+  def getParam(name: String): Param[_] = ???
 
   private val defaultParamMap: ParamMap = ParamMap.empty
 
-  protected final def getDefault(param: Param): Option[Int] = defaultParamMap.get(param)
+  private val paramMap: ParamMap = ParamMap.empty
 
-  protected final def setDefault(param: Param, value: Int): this.type = {
-    defaultParamMap(param) = value
-    this
+  final def getDefault[T](param: Param[T]): Option[T] = {
+    defaultParamMap.get(param)
   }
 
-  protected final def setDefault(paramPairs: ParamPair*): this.type = {
+  protected final def setDefault[T](param: Param[T], value: T): Self = {
+    defaultParamMap.put(param, value)
+    this.asInstanceOf[Self]
+  }
+
+  protected final def setDefault(paramPairs: ParamPair[_]*): Self = {
     paramPairs.foreach { p =>
-      setDefault(p.param, p.value)
+      setDefault(p.param.asInstanceOf[Param[Any]], p.value)
     }
-    this
+    this.asInstanceOf[Self]
   }
 
-  protected val paramMap: ParamMap = mutable.Map.empty
-
-  protected final def getOrDefault(param: Param): Int = {
-    paramMap.get(param).orElse(getDefault(param)).get
+  protected final def getOrDefault[T](param: Param[T]): T = {
+    get(param).orElse(getDefault(param)).get
   }
 
-  protected final def set(param: Param, value: Int): this.type = {
-    require(param.parent == this)
-    paramMap(param) = value
-    this
+  def get[T](param: Param[T]): Option[T] = {
+    shouldOwn(param)
+    paramMap.get(param)
+  }
+
+  protected final def set[T](param: Param[T], value: T): Self = {
+    shouldOwn(param)
+    paramMap.put(param, value)
+    this.asInstanceOf[Self]
   }
 
   def extractParamMap(extraParamMap: ParamMap): ParamMap = {
     defaultParamMap ++ paramMap ++ extraParamMap
   }
+
+  private def shouldOwn(param: Param[_]): Unit = {
+    require(param == getParam(param.name))
+  }
+
+  def copyWith(extra: ParamMap): Self = ???
+
+  protected def $[T](param: Param[T]): T = getOrDefault(param)
 }

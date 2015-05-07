@@ -1,17 +1,16 @@
 package classification
 
-import param._
-import param.shared._
+import ml.DataFrame
+import param.{ParamMap, Params}
+import param.shared.{HasMaxIter, HasRegParam}
 
-abstract class LogisticRegression extends Params with HasMaxIter with HasRegParam {
+trait LogisticRegressionBase extends Params[LogisticRegressionBase] with HasMaxIter with HasRegParam
 
-  def setMaxIter(value: Int): this.type = set(maxIter, value)
+abstract class LogisticRegression extends LogisticRegressionBase with Params[LogisticRegression] {
 
-  def setRegParam(value: Int): this.type = set(regParam, value)
-
-  setDefault(maxIter -> 10, regParam -> 1)
-
-  def fit(df: AnyRef, extraParamMap: ParamMap): LogisticRegressionModel = ???
+  def fit(dataset: DataFrame): LogisticRegressionModel = ???
 }
 
-class LogisticRegressionModel extends Params with HasMaxIter with HasRegParam
+class LogisticRegressionModel extends LogisticRegressionBase with Params[LogisticRegressionModel] {
+  override def copyWith(extra: ParamMap): LogisticRegressionModel = ???
+}
