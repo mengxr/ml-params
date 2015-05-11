@@ -10,5 +10,7 @@ public class JavaLogisticRegressionSuite {
       .setMaxIter(10)
       .setRegParam(0.1);
     LogisticRegressionModel model = lr.fit(training);
+
+    JavaLogisticRegression jlr = new JavaLogisticRegression();
   }
 }

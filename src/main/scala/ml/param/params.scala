@@ -4,6 +4,8 @@ import scala.annotation.varargs
 
 import ml.util.Identifiable
 
+import scala.collection.mutable
+
 class Param[T](val parentUID: String, val name: String, val doc: String) {
 
   def this(parent: Identifiable, name: String, doc: String) = this(parent.uid, name, doc)
@@ -26,13 +28,35 @@ class Param[T](val parentUID: String, val name: String, val doc: String) {
   def validate(value: T): Unit = {}
 }
 
+class IntParam(parentUID: String, name: String, doc: String) extends Param[Int](parentUID, name, doc) {
+  def this(parent: Identifiable, name: String, doc: String) = this(parent.uid, name, doc)
+
+  override def w(value: Int) = this -> value
+}
+
+class DoubleParam(parentUID: String, name: String, doc: String) extends Param[Double](parentUID, name, doc) {
+  def this(parent: Identifiable, name: String, doc: String) = this(parent.uid, name, doc)
+
+  override def w(value: Double) = this -> value
+}
+
 case class ParamPair[T](param: Param[T], value: T) {
   param.validate(value)
 }
 
 class ParamMap {
 
-  def put[T](param: Param[T], value: T): this.type = ???
+  private val map = mutable.Map.empty[Param[Any], Any]
+
+  // def put[T](param: Param[T], value: T): this.type = put(param -> value)
+
+  @varargs
+  def put(first: ParamPair[_], others: ParamPair[_]*): this.type = {
+    (first +: others).foreach { p =>
+      map.put(p.param.asInstanceOf[Param[Any]], p.value)
+    }
+    this
+  }
 
   def get[T](parent: Param[T]): Option[T] = ???
 
@@ -60,15 +84,10 @@ trait Params[+Self <: Params[Self]] extends Identifiable {
     defaultParamMap.get(param)
   }
 
-  protected final def setDefault[T](param: Param[T], value: T): this.type = {
-    defaultParamMap.put(param, value)
-    this
-  }
-
   @varargs
-  protected final def setDefault(paramPairs: ParamPair[_]*): this.type = {
-    paramPairs.foreach { p =>
-      setDefault(p.param.asInstanceOf[Param[Any]], p.value)
+  protected final def setDefault(first: ParamPair[_], others: ParamPair[_]*): this.type = {
+    (first +: others).foreach { p =>
+      defaultParamMap.put(p)
     }
     this
   }
@@ -82,9 +101,14 @@ trait Params[+Self <: Params[Self]] extends Identifiable {
     paramMap.get(param)
   }
 
-  protected final def set[T](param: Param[T], value: T): this.type = {
-    shouldOwn(param)
-    paramMap.put(param, value)
+  // protected final def set[T](param: Param[T], value: T): this.type = set(param -> value)
+
+  @varargs
+  protected final def set(first: ParamPair[_], others: ParamPair[_]*): this.type = {
+    (first +: others).foreach { p =>
+      shouldOwn(p.param)
+      paramMap.put(p)
+    }
     this
   }
 
@@ -96,7 +120,7 @@ trait Params[+Self <: Params[Self]] extends Identifiable {
     require(param == getParam(param.name))
   }
 
-  def copy(extra: ParamMap): Self = ???
+  def copy(extra: ParamMap): Self = null.asInstanceOf[Self]
 
   protected final def $[T](param: Param[T]): T = getOrDefault(param)
 }
