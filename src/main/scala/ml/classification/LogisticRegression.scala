@@ -1,8 +1,8 @@
 package ml.classification
 
-import ml.DataFrame
 import ml.param.{ParamMap, Params}
 import ml.param.shared.{HasMaxIter, HasRegParam}
+import sql.DataFrame
 
 trait LogisticRegressionBase extends Params[LogisticRegressionBase] with HasMaxIter with HasRegParam
 

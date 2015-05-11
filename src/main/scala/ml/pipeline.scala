@@ -1,6 +1,7 @@
 package ml
 
 import ml.param.{ParamMap, Params}
+import sql.DataFrame
 
 trait PipelineStage[+Self <: PipelineStage[Self]] extends Params[Self]
 
