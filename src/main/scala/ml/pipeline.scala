@@ -1,33 +1,55 @@
 package ml
 
 import ml.param.{ParamMap, Params}
-import sql.DataFrame
+import sql.{Schema, DataFrame}
 
-trait PipelineStage[+Self <: PipelineStage[Self]] extends Params[Self]
+trait PipelineStage extends Params {
 
-abstract class Transformer[+Self] extends PipelineStage[Transformer[Self]] {
+  def transformSchema(schema: Schema): Schema = ???
+
+  override def copy(extra: ParamMap): PipelineStage = ???
+}
+
+abstract class Transformer extends PipelineStage {
+
+  override def copy(extra: ParamMap): Transformer = ???
 
   def transform(dataset: DataFrame): DataFrame = ???
 
   def transform(dataset: DataFrame, extra: ParamMap): DataFrame = {
-    val dup = copy(extra)
-    dup.transform(dataset)
+    copy(extra).transform(dataset)
   }
 }
 
-abstract class Estimator[+Self, M <: Model[M]] extends PipelineStage[Estimator[Self, M]] {
+abstract class Estimator[M <: Model[M]] extends PipelineStage {
+
   def fit(dataset: DataFrame): M = ???
+
   def fit(dataset: DataFrame, extra: ParamMap): M = {
     val dup = copy(extra)
     dup.fit(dataset)
   }
+
+  override def copy(extra: ParamMap): Estimator[M] = super.copy(extra).asInstanceOf[Estimator[M]]
 }
 
-abstract class Model[+Self] extends Transformer[Model[Self]] {
-  @transient val estimator: Estimator[_, _] = ???
+abstract class Model[Self <: Model[Self]] extends Transformer {
+
+  @transient val estimator: Estimator[Self] = ???
+
   @transient val trainingDataset: DataFrame = ???
+
+  override def copy(extra: ParamMap): Self = super.copy(extra).asInstanceOf[Self]
 }
 
-class Pipeline extends Estimator[Pipeline, PipelineModel]
+class Pipeline extends Estimator[PipelineModel] {
 
-class PipelineModel extends Model[PipelineModel]
+  override def uid: String = ???
+
+  override def copy(extra: ParamMap): Pipeline = super.copy(extra).asInstanceOf[Pipeline]
+}
+
+class PipelineModel extends Model[PipelineModel] {
+
+  override def uid: String = ???
+}
