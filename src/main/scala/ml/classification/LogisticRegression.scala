@@ -1,14 +1,14 @@
 package ml.classification
 
 import ml.{Estimator, Model}
-import ml.param.{ParamMap, Params}
-import ml.param.shared.{HasMaxIter, HasRegParam}
+import ml.param.Params
+import ml.param.shared.{HasFeaturesCol, HasMaxIter, HasRegParam}
 import sql.DataFrame
 
 private[classification]
-trait LogisticRegressionBase extends Params[LogisticRegressionBase] with HasMaxIter with HasRegParam
+trait LogisticRegressionBase extends Params[LogisticRegressionBase] with HasFeaturesCol
 
-class LogisticRegression extends Estimator[LogisticRegressionModel] with LogisticRegressionBase with Params[LogisticRegression] {
+class LogisticRegression extends Estimator[LogisticRegressionModel] with Params[LogisticRegression] with LogisticRegressionBase with HasMaxIter with HasRegParam {
 
   override def fit(dataset: DataFrame): LogisticRegressionModel = ???
 
@@ -17,6 +17,8 @@ class LogisticRegression extends Estimator[LogisticRegressionModel] with Logisti
   override def setMaxIter(value: Int): this.type = super.setMaxIter(value)
 
   override def setRegParam(value: Double): this.type = super.setRegParam(value)
+
+  override def setFeaturesCol(value: String): this.type = super.setFeaturesCol(value)
 }
 
 class LogisticRegressionModel extends Model[LogisticRegressionModel] with LogisticRegressionBase with Params[LogisticRegressionModel] {
@@ -24,4 +26,6 @@ class LogisticRegressionModel extends Model[LogisticRegressionModel] with Logist
   override def transform(dataset: DataFrame): DataFrame = ???
 
   override def uid: String = ???
+
+  override def setFeaturesCol(value: String): this.type = super.setFeaturesCol(value)
 }
