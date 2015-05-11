@@ -1,8 +1,8 @@
-package classification
+package ml.classification
 
 import ml.DataFrame
-import param.{ParamMap, Params}
-import param.shared.{HasMaxIter, HasRegParam}
+import ml.param.{ParamMap, Params}
+import ml.param.shared.{HasMaxIter, HasRegParam}
 
 trait LogisticRegressionBase extends Params[LogisticRegressionBase] with HasMaxIter with HasRegParam
 
@@ -12,5 +12,5 @@ abstract class LogisticRegression extends LogisticRegressionBase with Params[Log
 }
 
 class LogisticRegressionModel extends LogisticRegressionBase with Params[LogisticRegressionModel] {
-  override def copyWith(extra: ParamMap): LogisticRegressionModel = ???
+  override def copy(extra: ParamMap): LogisticRegressionModel = ???
 }

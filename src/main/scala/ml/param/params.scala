@@ -1,6 +1,6 @@
-package param
+package ml.param
 
-import util.Identifiable
+import ml.util.Identifiable
 
 class Param[T](val parent: Params[_], val name: String, val doc: String) {
   def validate(value: T): Unit = {}
@@ -71,7 +71,7 @@ trait Params[+Self <: Params[Self]] extends Identifiable {
     require(param == getParam(param.name))
   }
 
-  def copyWith(extra: ParamMap): Self = ???
+  def copy(extra: ParamMap): Self = ???
 
-  protected def $[T](param: Param[T]): T = getOrDefault(param)
+  protected final def $[T](param: Param[T]): T = getOrDefault(param)
 }

@@ -1,6 +1,6 @@
 package ml
 
-import param.{ParamMap, Params}
+import ml.param.{ParamMap, Params}
 
 trait PipelineStage[+Self <: PipelineStage[Self]] extends Params[Self]
 
@@ -9,7 +9,7 @@ abstract class Transformer[+Self] extends PipelineStage[Transformer[Self]] {
   def transform(dataset: DataFrame): DataFrame = ???
 
   def transform(dataset: DataFrame, extra: ParamMap): DataFrame = {
-    val dup = copyWith(extra)
+    val dup = copy(extra)
     dup.transform(dataset)
   }
 }
@@ -17,7 +17,7 @@ abstract class Transformer[+Self] extends PipelineStage[Transformer[Self]] {
 abstract class Estimator[+Self, M <: Model[M]] extends PipelineStage[Estimator[Self, M]] {
   def fit(dataset: DataFrame): M = ???
   def fit(dataset: DataFrame, extra: ParamMap): M = {
-    val dup = copyWith(extra)
+    val dup = copy(extra)
     dup.fit(dataset)
   }
 }
