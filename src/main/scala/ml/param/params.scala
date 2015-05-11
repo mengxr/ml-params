@@ -46,7 +46,7 @@ object ParamMap {
 
 trait Params[+Self <: Params[Self]] extends Identifiable {
 
-  val params: Array[Param[_]] = ???
+  lazy val params: Array[Param[_]] = ???
 
   def hasParam(name: String): Boolean = ???
 

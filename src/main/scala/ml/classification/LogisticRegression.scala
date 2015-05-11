@@ -23,7 +23,5 @@ class LogisticRegressionModel extends Model[LogisticRegressionModel] with Logist
 
   override def transform(dataset: DataFrame): DataFrame = ???
 
-  override def copy(extra: ParamMap): LogisticRegressionModel = ???
-
   override def uid: String = ???
 }
