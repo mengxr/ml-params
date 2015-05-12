@@ -1,5 +1,6 @@
 package ml.param
 
+import scala.annotation.varargs
 import scala.collection.mutable
 
 import ml.util.Identifiable
@@ -48,8 +49,11 @@ class ParamMap {
 
   // def put[T](param: Param[T], value: T): this.type = put(param -> value)
 
-  def put(paramPair: ParamPair[_]): this.type = {
-    map.put(paramPair.param.asInstanceOf[Param[Any]], paramPair.value)
+  @varargs
+  def put(paramPairs: ParamPair[_]*): this.type = {
+    paramPairs.foreach { p =>
+      map.put(p.param.asInstanceOf[Param[Any]], p.value)
+    }
     this
   }
 
@@ -95,9 +99,12 @@ trait Params extends Identifiable {
 
   // protected final def set[T](param: Param[T], value: T): this.type = set(param -> value)
 
-  protected final def set(paramPair: ParamPair[_]): this.type = {
-    shouldOwn(paramPair.param)
-    paramMap.put(paramPair)
+  @varargs
+  protected final def set(paramPairs: ParamPair[_]*): this.type = {
+    paramPairs.foreach { p =>
+      shouldOwn(p.param)
+      paramMap.put(p)
+    }
     this
   }
 
