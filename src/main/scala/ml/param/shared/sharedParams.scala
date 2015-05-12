@@ -2,7 +2,7 @@ package ml.param.shared
 
 import ml.param.{DoubleParam, IntParam, Param, Params}
 
-private[ml] trait HasFeaturesCol extends Params[HasFeaturesCol] {
+private[ml] trait HasFeaturesCol extends Params {
 
   final val featuresCol: Param[String] = new Param[String](this, "featuresCol", "features column name")
 
@@ -11,7 +11,7 @@ private[ml] trait HasFeaturesCol extends Params[HasFeaturesCol] {
   protected def setFeaturesCol(value: String): this.type = set(featuresCol -> value)
 }
 
-private[ml] trait HasMaxIter extends Params[HasMaxIter] {
+private[ml] trait HasMaxIter extends Params {
 
   final val maxIter: IntParam = new IntParam(this, "maxIter", "max number of iterations")
 
@@ -20,7 +20,7 @@ private[ml] trait HasMaxIter extends Params[HasMaxIter] {
   protected def setMaxIter(value: Int): this.type = set(maxIter -> value)
 }
 
-private[ml] trait HasRegParam extends Params[HasMaxIter] {
+private[ml] trait HasRegParam extends Params {
 
   final val regParam: DoubleParam = new DoubleParam(this, "regParam", "regularization parameter")
 

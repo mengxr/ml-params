@@ -63,7 +63,7 @@ object ParamMap {
   def empty: ParamMap = new ParamMap
 }
 
-trait Params[+Self <: Params[Self]] extends Identifiable {
+trait Params extends Identifiable {
 
   lazy val params: Array[Param[_]] = ???
 
@@ -109,7 +109,7 @@ trait Params[+Self <: Params[Self]] extends Identifiable {
     require(param == getParam(param.name))
   }
 
-  def copy(extra: ParamMap): Self = null.asInstanceOf[Self]
+  def copy(extra: ParamMap): Params = ???
 
   protected final def $[T](param: Param[T]): T = getOrDefault(param)
 }

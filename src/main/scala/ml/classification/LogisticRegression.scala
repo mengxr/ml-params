@@ -6,9 +6,10 @@ import ml.param.shared.{HasFeaturesCol, HasMaxIter, HasRegParam}
 import sql.DataFrame
 
 private[classification]
-trait LogisticRegressionBase extends Params[LogisticRegressionBase] with HasFeaturesCol
+trait LogisticRegressionBase extends Params with HasFeaturesCol
 
-class LogisticRegression extends Estimator[LogisticRegressionModel] with Params[LogisticRegression] with LogisticRegressionBase with HasMaxIter with HasRegParam {
+class LogisticRegression extends Estimator[LogisticRegressionModel]
+  with LogisticRegressionBase with HasMaxIter with HasRegParam {
 
   override def fit(dataset: DataFrame): LogisticRegressionModel = ???
 
@@ -21,7 +22,7 @@ class LogisticRegression extends Estimator[LogisticRegressionModel] with Params[
   override def setFeaturesCol(value: String): this.type = super.setFeaturesCol(value)
 }
 
-class LogisticRegressionModel extends Model[LogisticRegressionModel] with LogisticRegressionBase with Params[LogisticRegressionModel] {
+class LogisticRegressionModel extends Model[LogisticRegressionModel] with LogisticRegressionBase {
 
   override def transform(dataset: DataFrame): DataFrame = ???
 

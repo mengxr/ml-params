@@ -6,7 +6,7 @@ import ml.param.IntParam;
 import ml.param.Param;
 import sql.DataFrame;
 
-public abstract class JavaLogisticRegression extends Estimator<JavaLogisticRegressionModel> {
+public class JavaLogisticRegression extends Estimator<JavaLogisticRegressionModel> {
 
   private IntParam _maxIter = new IntParam(this, "maxIter", "max number of iterations");
   public IntParam maxIter() { return _maxIter; }
