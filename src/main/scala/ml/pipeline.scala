@@ -1,16 +1,16 @@
 package ml
 
 import ml.param.{ParamMap, Params}
-import sql.{Schema, DataFrame}
+import sql.DataFrame
 
 trait PipelineStage extends Params[PipelineStage] {
 
-  def transformSchema(schema: Schema): Schema = ???
+  // def transformSchema(schema: Schema): Schema = ???
 }
 
 abstract class Transformer extends PipelineStage with Params[Transformer] {
 
-  def transform(dataset: DataFrame): DataFrame = ???
+  def transform(dataset: DataFrame): DataFrame
 
   def transform(dataset: DataFrame, extra: ParamMap): DataFrame = {
     copy(extra).transform(dataset)
@@ -19,7 +19,7 @@ abstract class Transformer extends PipelineStage with Params[Transformer] {
 
 abstract class Estimator[M <: Model[M]] extends PipelineStage with Params[Estimator[M]] {
 
-  def fit(dataset: DataFrame): M = ???
+  def fit(dataset: DataFrame): M
 
   def fit(dataset: DataFrame, extra: ParamMap): M = {
     val dup = copy(extra)
@@ -27,19 +27,18 @@ abstract class Estimator[M <: Model[M]] extends PipelineStage with Params[Estima
   }
 }
 
-abstract class Model[Self <: Model[Self]] extends Transformer with Params[Model[Self]] {
+abstract class Model[Self <: Model[Self]] extends Transformer with Params[Model[Self]]
 
-  @transient val estimator: Estimator[Self] = ???
+class Pipeline extends Estimator[PipelineModel] with Params[Pipeline] {
 
-  @transient val trainingDataset: DataFrame = ???
+  override def uid: String = "pipeline"
+
+  override def fit(dataset: DataFrame): PipelineModel = ???
 }
 
-class Pipeline extends Estimator[PipelineModel] {
+class PipelineModel extends Model[PipelineModel] with Params[PipelineModel] {
 
   override def uid: String = ???
-}
 
-class PipelineModel extends Model[PipelineModel] {
-
-  override def uid: String = ???
+  override def transform(dataset: DataFrame): DataFrame = ???
 }

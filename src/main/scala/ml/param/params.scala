@@ -1,10 +1,8 @@
 package ml.param
 
-import scala.annotation.varargs
+import scala.collection.mutable
 
 import ml.util.Identifiable
-
-import scala.collection.mutable
 
 class Param[T](val parentUID: String, val name: String, val doc: String) {
 
@@ -50,11 +48,8 @@ class ParamMap {
 
   // def put[T](param: Param[T], value: T): this.type = put(param -> value)
 
-  @varargs
-  def put(first: ParamPair[_], others: ParamPair[_]*): this.type = {
-    (first +: others).foreach { p =>
-      map.put(p.param.asInstanceOf[Param[Any]], p.value)
-    }
+  def put(paramPair: ParamPair[_]): this.type = {
+    map.put(paramPair.param.asInstanceOf[Param[Any]], paramPair.value)
     this
   }
 
@@ -84,11 +79,8 @@ trait Params[+Self <: Params[Self]] extends Identifiable {
     defaultParamMap.get(param)
   }
 
-  @varargs
-  protected final def setDefault(first: ParamPair[_], others: ParamPair[_]*): this.type = {
-    (first +: others).foreach { p =>
-      defaultParamMap.put(p)
-    }
+  protected final def setDefault(paramPair: ParamPair[_]): this.type = {
+    defaultParamMap.put(paramPair)
     this
   }
 
@@ -103,12 +95,9 @@ trait Params[+Self <: Params[Self]] extends Identifiable {
 
   // protected final def set[T](param: Param[T], value: T): this.type = set(param -> value)
 
-  @varargs
-  protected final def set(first: ParamPair[_], others: ParamPair[_]*): this.type = {
-    (first +: others).foreach { p =>
-      shouldOwn(p.param)
-      paramMap.put(p)
-    }
+  protected final def set(paramPair: ParamPair[_]): this.type = {
+    shouldOwn(paramPair.param)
+    paramMap.put(paramPair)
     this
   }
 
